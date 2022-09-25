@@ -16,7 +16,7 @@ jobs:
                 --stack-name FwdServer \
                 --region us-east-1
 
-  configure_infrastructures:
+  configure_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
@@ -36,6 +36,6 @@ jobs:
 workflows:
   create_infrastructure-workflow:
     jobs:
-      - create_infrastructure
-      #- configure_infrastructure
+      #- create_infrastructure
+      - configure_infrastructure
 
