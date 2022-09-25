@@ -1,0 +1,41 @@
+version: 2.1
+
+jobs:
+  create_infrastructure:
+
+    docker:
+      - image: amazon/aws-cli
+
+    steps:
+      - checkout
+      - run:
+          name: "create-infrastructure"
+          command: |
+              aws cloudformation deploy \
+                --template-file template.yml \
+                --stack-name FwdServer \
+                --region us-east-1
+
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+      
+              fingerprints: ["f6:81:e2:70:f6:4b:d9:f7:1a:de:9d:74:be:9f:f0:21"] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i inventory.txt main.yml
+
+workflows:
+  create_infrastructure-workflow:
+    jobs:
+      #- create_infrastructure
+      - configure_infrastructure
+
